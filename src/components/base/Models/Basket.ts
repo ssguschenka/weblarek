@@ -30,7 +30,7 @@ export class Basket {
   }
 
   //очистка корзины
-  clearBascet(): void {
+  clearBasket(): void {
     this.products = [];
   }
 

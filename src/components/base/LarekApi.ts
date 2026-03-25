@@ -6,7 +6,7 @@ import {
   IOrderProducts,
 } from "../../types";
 
-export class Order {
+export class LarekApi {
   obg: IApi;
 
   constructor(obg: IApi) {

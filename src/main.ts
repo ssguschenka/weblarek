@@ -1,13 +1,13 @@
 import { Catalog } from "./components/base/Models/Catalog";
 import { Basket } from "./components/base/Models/Basket";
 import { Buyer } from "./components/base/Models/Buyer";
-import { Order } from "./components/base/Order";
+import { LarekApi } from "./components/base/LarekApi";
 import { Api } from "./components/base//Api";
 import "./scss/styles.scss";
 import { apiProducts } from "./utils/data";
 import { API_URL } from "./utils/constants";
 
-let productsModel = new Catalog();
+const productsModel = new Catalog();
 
 productsModel.saveProducts(apiProducts.items);
 
@@ -38,7 +38,7 @@ console.log(
 );
 basketModel.deleteItem(apiProducts.items[1]); //удалениe товара из корзины
 console.log("получениe массива товаров в корзине: ", basketModel.getProducts());
-basketModel.clearBascet(); //Очистка корзины
+basketModel.clearBasket(); //Очистка корзины
 console.log("получениe массива товаров в корзине: ", basketModel.getProducts());
 
 const person = {
@@ -56,9 +56,9 @@ byuer.clearBuyer(); // очистка данных покупателя
 console.log("получениe всех данных покупателя: ", byuer.getBuyer());
 
 const api = new Api(API_URL);
-const ord = new Order(api);
-productsModel.saveProducts(await ord.getProductList());
-console.log(
-  "Список товаров, полученных от сервера :",
-  productsModel.getProducts(),
-);
+const larekApi = new LarekApi(api);
+
+larekApi.getProductList().then((items) => {
+    productsModel.saveProducts(items);
+    console.log("Список товаров, полученных от сервера :", productsModel.getProducts());
+}).catch((error) => console.error(error));
