@@ -46,7 +46,7 @@ const person = {
   address: "Ural",
   email: "sobaka@mail.ru",
   phone: "+79993434999",
-};
+}; 
 const byuer = new Buyer();
 
 byuer.saveBuyer(person); //сохраняем донные покупателя
