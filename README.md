@@ -233,42 +233,201 @@ Presenter - презентер содержит основную логику п
 #### Слой Прелставления
 
 #### Интерфейс IHeader
-Содержит данные о счетчике
+Содержит информацию о счетчике
 
 Поля интерфейса:
 `counter: number` - счетсик товаров в корзине
 
-
-#### Класс Header
+#### Класс HeaderView
 Cодержит логику работы с элементами в шапке сейта
 
 Конструктор:
-`constructor(basketButton: HTMLButtonElement, counterElement: HTMLElement)` - Принимает объект кнопки и счетчик товаров в корзине
+`constructor(container: HTMLElement)` - Принимает элемент шапки сайта
 
 Поля класса:
 `basketButton: HTMLButtonElement` - поле для хранения элемента кнопки
-`counterElement: HTMLElement` - поле для хранения счетчика
+`counterElement: HTMLElement` - поле для хранения элемента счетчика
 
 Методы класса:
-`set counter(value: number)` - метод для установки нового значения счечика
+`setCounter(value: number): void` - метод для установки нового значения счечика
 
 
 #### Интерфейс IGallery
-
-Сщдержит данные о каталоге товаров
+Содержит информацию о каталоге товаров
 
 Поля интерфейса:
-`catalog: HTMLElement[]` - массив товаров в каталоге
+`catalog: HTMLElement[]` - массив элементов товаров в каталоге
 
 
-#### Класс GAllery
+#### Класс GаlleryView
 Cодержит логику работы с элементами в каталоге товаров
 
 Конструктор:
-`constructor(catalogElement: HTMLElement)` - Принимает объект карточки товара 
+`constructor(container: HTMLElement)` - Принимает элемент каталога товаров
 
 Поля класса:
-`catalogElement: HTMLElement` - поле для хранения карточки товара
+`catalogElement: HTMLElement` - поле для хранения элемнета карточки товара
 
 Методы класса:
-`set catalog(items: HTMLElement[])` - метод для добавления товаров в каталог
+`setCatalog(items :IGallery): HTMLElement` - метод для добавления элементов товаров в каталог
+
+
+
+#### Интерфейс ICard
+Содержит информацию о карточке товара
+
+Поля интерфейса:
+`title?: string` - название товара
+`image?: string` - изображение товара
+`imageAlt?: string` - описание изображения
+`category?: string` - категория товара
+`price?: number | null` - цена товара
+`disabled?: boolean` - активность кноки "Купить"
+
+
+#### Класс CardView extends Component<ICard>
+Родительский класс для карточек товаров
+
+Конструктор:
+`constructor(container: HTMLElement)` - Принимает контейнер карточки товара
+
+Поля класса:
+`priceElement?: HTMLElement` - поле для хранения элемента цены товара
+`titleElement?: HTMLElement` - поле для хранения элемента названия товара
+`categoryElement?: HTMLElement` - поле для хранения элемента категории товара
+`imageElement?: HTMLImageElement` - поле для хранения элемента изображения товара
+`buttonElement?: HTMLButtonElement` - поле для хранения элемента кнопки товара
+
+Методы класса:
+`setPrice(value: number): void` - метод для установки цены в карточку товара
+`setTitle(value: string): void` - метод для установки названия в карточку товара
+`setCategory(value: string): void` - метод для установки категории в карточку товара
+`setImageEl(src: string, alt?: string): void` - метод для установки изображения в карточку товара
+`setButton(value: string): void` - метод для установки кнопки в карточку товара
+
+
+#### Класс CardCatalogView extends CardView
+Cодержит логику работы с элементами в карточках каталога товаров
+
+Конструктор:
+`constructor(container: HTMLElement,  onOpen: () => void)` - Принимает контейнер карточки в каталоге и функцию открытия карточки товара
+
+
+#### Класс CardPreviewView extends CardView
+Содержит логику работы с элементами в карточках модального окна
+
+Конструктор:
+`constructor(container: HTMLElement)` - Принимает контейнер карточки в модальном окне
+
+Поля класса:
+`textElement: HTMLElement` - поле для хранения элемента описания товара
+
+Методы класса:
+`setText(value: string)` - метод для установки описания в карточку товара
+
+
+#### Класс CardBasketView extends CardView
+Содержит логику работы с элементами в карточках в корзине
+
+Конструктор:
+`constructor(container: HTMLElement, onDelite: () => void)` - Принимает контейнер карточки в корзине товаров и функцию удаления карточки из корзины
+
+Поля класса:
+`indexElement: HTMLElement` - поле для хранения элемента индекса товара
+`buttonRemoveElement: HTMLButtonElement` - поле для хранения элемента кнопки удаления товара
+
+Методы класса:
+`setIndex(value: number)` - метод для установки индеса товара в корзине
+
+
+#### Класс ModalView
+Содержит логику работы с элементами модального окна
+
+Конструктор:
+`constructor(container: HTMLElement, onClose: () => void)` - Принимает контейнер модальнонго окна и функцию закрытия модального окна
+
+Поля класса:
+`containerElement: HTMLElement` - поле для хранения элемента контейнера модального окна
+`contentElement: HTMLElement` - поле для хранения элемента контента модального окна
+`buttonCloseElement: HTMLButtonElement` - поле для хранения элемента кнопки закрытия модального окна
+
+Методы класса:
+`open(content: HTMLElement): void` - метод открытия модального окна. Устанавливается контент в модальное окно и присваивается класс 'modal_active' контейнеру
+`close(): void` - метод ззакрытия модального окна. Удаляется контент в модальном окно и удаляется класс 'modal_active' у контейнера
+
+
+#### Класс SuccessView
+Содержит логику работы с элементами карточки оформленного заказа
+
+Конструктор:
+`constructor(container: HTMLElement)` -Принимает контейнер окна завершенного заказа
+
+Поля класса:
+`titleElement: HTMLElement` - поле для хранения элемента заголовка картовки покупки
+`textElement: HTMLElement` - поле для хранения элемента описания карточки покупки
+`buttonElement: HTMLButtonElement` - поле для хранения элемента кнопки карточки покупки
+
+Методы класса:
+`setTitle(value: string)` - метод для установки заголовка
+`setText(value: string)` - метод для установки суммы покупки
+
+
+#### Класс BasketView
+Содержит логику работы с элементами в корзине: список товаров, сумма всех товаров, кнопка "Оформить"
+
+Конструктор:
+`constructor(container: HTMLElement)` - Принимает контейнер корзины товаров
+
+Поля класса:
+`listElement: HTMLElement` - поле для хранения элемента карточки товара
+`buttonElement: HTMLButtonElement` - поле для хранения элемента кнопки оформления заказа
+`priceElement: HTMLElement` - поле для хранения элемента суммы всех товарав в корзине
+`emptyTextElement: HTMLElement | null = null` - поле для хранения элемента пустой корзины
+
+Методы класса:
+`render(items: HTMLElement[], value: number): HTMLElement` - метод для отрисовки элементов корзины, в зависимости от наличия в ней карточек товаров
+`setButtonDisabled(value: boolean)` - метод дл дезaктивации кнопки "Оформить"
+
+
+#### Класс FormView
+Содержит логику работы с общими элементами форм: кнопки отправки, элементы ошибок
+
+Конструктор:
+`constructor(container: HTMLFormElement)` - Принимает контейнер формы оформления заказа
+
+Поля класса:
+`buttonSubmit: HTMLButtonElement` - поле для хранения элемента кнопки отпраки
+`errorsElement: HTMLElement` - поле для хранения элемента ошибкок
+
+Методы класса:
+`setErrors(errors: Record<string, string>): void` - метод для отрисовки сообщения об ошибке
+`setDisabled(value: boolean): void` - метод для дезaктивации кнопки отправки данных
+
+
+#### Класс OrderView extends FormView
+Содержит логику работы с элементами формы офоррмленния заказа: кнопки способа оплаты, поле ввода адреса доставки
+
+Конструктор:
+`constructor(container: HTMLFormElement, private events: EventEmitter)` - Принимает контейнер формы оформления заказа и брокер событий
+
+Поля класса:
+`buttonsPayElement:  NodeListOf<HTMLButtonElement>` - поле для хранения массива кнопок вида способа оплаты заказа 
+`imputAddress: HTMLInputElement` - поле для хранения поля ввода адреса доставки
+
+Методы класса:
+
+
+#### Класс ContactsView extends FormView
+Содержит логику работы с элементами формы офоррмленния заказа: поля ввода электронной почты и телефона покупателя
+
+Конструктор:
+`constructor(container: HTMLFormElement, private events: EventEmitter)` - Принимает контейнер формы оформления заказа  и брокер событий
+
+Поля класса:
+`inputРhone: HTMLInputElement` - поле для хранения поля ввода телефона покупателя
+`inputЕmail: HTMLInputElement` - поле для хранения поля ввода почты покупателя
+
+Методы класса:
+
+
+

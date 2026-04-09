@@ -1,4 +1,5 @@
-import { IBuyer } from "../../../types";
+import { IBuyer } from "../../types";
+import { EventEmitter } from "../base/Events";
 
 export class Buyer {
   private payment: IBuyer["payment"] = "";
@@ -6,7 +7,11 @@ export class Buyer {
   private phone: string = "";
   private email: string = "";
 
-  constructor() {}
+  private events: EventEmitter;
+
+  constructor(events: EventEmitter) {
+    this.events = events;
+  }
 
   /**
    * сохранениe данных покупателя
@@ -25,6 +30,8 @@ export class Buyer {
     if (data.email !== undefined) {
       this.email = data.email;
     }
+
+    this.events.emit('buyer:changed', this.getBuyer())
   }
 
   //получениe всех данных покупателя
@@ -43,6 +50,7 @@ export class Buyer {
     this.address = "";
     this.phone = "";
     this.email = "";
+    this.events.emit('buyer:changed', this.getBuyer())
   }
 
   //проверкa валидности данных

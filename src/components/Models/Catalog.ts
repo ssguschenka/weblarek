@@ -1,10 +1,14 @@
-import { IProduct } from "../../../types";
+import { IProduct } from "../../types";
+import { EventEmitter } from "../base/Events";
 
 export class Catalog {
   private products: IProduct[] = [];
   private item: IProduct | null = null; // выбранный товар
+  private events: EventEmitter;
 
-  constructor() {}
+  constructor(events: EventEmitter) {
+    this.events = events;
+  }
 
   /**
    * сохранениe массива товаров
@@ -12,6 +16,7 @@ export class Catalog {
    */
   saveProducts(products: IProduct[]): void {
     this.products = products;
+     this.events.emit('catalog:changed', { products: this.getProducts() });
   }
 
   // получениe массива товаров из каталога
@@ -33,6 +38,7 @@ export class Catalog {
    */
   saveItem(item: IProduct): void {
     this.item = item;
+    this.events.emit('catalog:selected', { product: this.item });
   }
 
   //получение товара для подробного отображения

@@ -4,7 +4,7 @@ import {
   IProduct,
   IResponseOrder,
   IOrderProducts,
-} from "../../types";
+} from "../types";
 
 export class LarekApi {
   obg: IApi;
