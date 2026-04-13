@@ -3,7 +3,7 @@ export class FormView {
   protected errorsElement: HTMLElement;
 
   constructor(protected container: HTMLFormElement) {
-    this.buttonSubmit = container.querySelector('[type="submit"]')!;
+    this.buttonSubmit = container.querySelector('[type="submit"]') as HTMLButtonElement;
     this.errorsElement = container.querySelector(".form__errors")!;
   }
 

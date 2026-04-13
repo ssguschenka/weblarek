@@ -108,4 +108,9 @@ export class CardView extends Component<ICard> {
       this.buttonElement.disabled = value;
     }
   }
+
+
+    onClick(handler: () => void) {
+        this.buttonElement?.addEventListener('click', handler);
+    }
 }
