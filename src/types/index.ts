@@ -1,5 +1,12 @@
+
 export type ApiPostMethods = "POST" | "PUT" | "DELETE";
 export type TPayment = "card" | "cash" | "";
+type Category =
+  | "софт-скил"
+  | "хард-скил"
+  | "кнопка"
+  | "дополнительное"
+  | "другое";
 
 export interface IApi {
   get<T extends object>(uri: string): Promise<T>;
@@ -10,11 +17,12 @@ export interface IApi {
   ): Promise<T>;
 }
 
+
 export interface IProduct {
   id: string;
   title: string;
   image: string;
-  category: string;
+  category: Category;
   price: number | null;
   description: string;
 }
@@ -27,13 +35,18 @@ export interface IBuyer {
 }
 
 export interface IOrder {
-  buyer: IBuyer;
-  item: IProduct;
+  items: string[];
+    total: number;
+    payment: TPayment;
+    email: string;
+    phone: string;
+    address: string;
 }
 
 export interface IResponseOrder {
   id: string;
   total: number;
+  message: string;
 }
 
 export interface IOrderProducts {

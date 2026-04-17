@@ -1,5 +1,4 @@
 import { FormView } from "./FormView";
-import { EventEmitter } from "../base/Events";
 
 export class ContactsView extends FormView {
   private inputРhone: HTMLInputElement;
@@ -7,7 +6,8 @@ export class ContactsView extends FormView {
 
   constructor(
     form: HTMLFormElement,
-    private events: EventEmitter,
+    onChange: (data: { email?: string; phone?: string }) => void,
+    onSubmit: () => void,
   ) {
     super(form);
 
@@ -15,20 +15,16 @@ export class ContactsView extends FormView {
     this.inputРhone = form.elements.namedItem("phone") as HTMLInputElement;
 
     this.inputЕmail.addEventListener("input", () => {
-      this.events.emit("order:change", {
-        email: this.inputЕmail.value,
-      });
+      onChange({ email: this.inputЕmail.value });
     });
 
     this.inputРhone.addEventListener("input", () => {
-      this.events.emit("order:change", {
-        phone: this.inputРhone.value,
-      });
+      onChange({ phone: this.inputРhone.value });
     });
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      this.events.emit("order:submit");
+      onSubmit();
     });
   }
 }

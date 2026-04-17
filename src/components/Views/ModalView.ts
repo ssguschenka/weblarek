@@ -4,11 +4,13 @@ export class ModalView {
   private buttonCloseElement: HTMLButtonElement;
 
   constructor(container: HTMLElement, onClose?: () => void) {
-    this.containerElement = container.querySelector(".modal__container")!;
+    this.containerElement = container;
     this.contentElement = container.querySelector(".modal__content")!;
     this.buttonCloseElement = container.querySelector(".modal__close")!;
 
     this.buttonCloseElement.addEventListener("click", () => {
+      this.close();
+
       if(onClose) {
         onClose();
       }

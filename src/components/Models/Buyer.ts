@@ -1,5 +1,6 @@
 import { IBuyer } from "../../types";
 import { EventEmitter } from "../base/Events";
+import { TPayment } from "../../types";
 
 export class Buyer {
   private payment: IBuyer["payment"] = "";
@@ -75,4 +76,25 @@ export class Buyer {
 
     return errors;
   }
+
+
+  public setPayment(payment: TPayment): void {
+        this.payment = payment;
+        this.events?.emit('buyer:changed', this.getBuyer());
+    }
+
+    public setAddress(address: string): void {
+        this.address = address;
+        this.events?.emit('buyer:changed', this.getBuyer());
+    }
+
+    public setPhone(phone: string): void {
+        this.phone = phone;
+        this.events?.emit('buyer:changed', this.getBuyer());
+    }
+
+    public setEmail(email: string): void {
+        this.email = email;
+        this.events?.emit('buyer:changed', this.getBuyer());
+    }
 }

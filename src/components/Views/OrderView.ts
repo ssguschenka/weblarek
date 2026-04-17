@@ -1,18 +1,18 @@
 import { FormView } from "./FormView";
-import { EventEmitter } from "../base/Events";
 
 export class OrderView extends FormView {
   private buttonsPayElement: NodeListOf<HTMLButtonElement>;
-  private imputAddress: HTMLInputElement;
+  private inputAddress: HTMLInputElement;
 
   constructor(
     form: HTMLFormElement,
-    private events: EventEmitter,
+    onChange: (data: { payment?: string; address?: string }) => void,
+    onSubmit: () => void,
   ) {
     super(form);
 
-    this.imputAddress = form.elements.namedItem("address") as HTMLInputElement;
-    this.buttonsPayElement = form.querySelectorAll(".order__buttons ")!;
+    this.inputAddress = form.elements.namedItem("address") as HTMLInputElement;
+    this.buttonsPayElement = form.querySelectorAll(".button_alt")!;
 
     // выбор оплаты
     this.buttonsPayElement.forEach((button) =>
@@ -22,23 +22,19 @@ export class OrderView extends FormView {
         );
         button.classList.add("button_alt-active");
 
-        this.events.emit("order:change", {
-          payment: button.name,
-        });
+        onChange({ payment: button.name });
       }),
     );
 
     // ввод адреса
-    this.imputAddress.addEventListener("input", () => {
-      this.events.emit("order:change", {
-        address: this.imputAddress.value,
-      });
-    });
+    this.inputAddress.addEventListener("input", () =>
+      onChange({ address: this.inputAddress.value }),
+    );
 
     // submit
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      this.events.emit("order:submit");
+      onSubmit();
     });
   }
 }
