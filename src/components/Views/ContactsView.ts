@@ -11,22 +11,19 @@ export class ContactsView extends FormView<TContacts> {
 
   constructor(
     form: HTMLFormElement,
-    // onChange: (data: { email?: string; phone?: string }) => void,
     protected events: IEvents
   ) {
-    super(form, events);
+    super(form, events, "contacts:submit");
 
-    this.inputЕmail = ensureElement<HTMLInputElement>("email", this.container);
-    this.inputРhone = ensureElement<HTMLInputElement>("phone", this.container);
+    this.inputЕmail = ensureElement<HTMLInputElement>('[name="email"]', this.container);
+    this.inputРhone = ensureElement<HTMLInputElement>('[name="phone"]', this.container);
 
     this.inputЕmail.addEventListener("input", () => {
-      // onChange({ email: this.inputЕmail.value });
-      this.events.emit("form:input");
+      this.events.emit("form:email", { email: this.inputЕmail.value });
     });
 
     this.inputРhone.addEventListener("input", () => {
-      // onChange({ phone: this.inputРhone.value });
-      this.events.emit("form:input");
+      this.events.emit("form:phone", { phone: this.inputРhone.value });
     });
   }
 

@@ -15,6 +15,7 @@ import { HeaderView } from "./components/Views/HeaderView";
 import { BasketView } from "./components/Views/BasketView";
 import { CardBasketView } from "./components/Views/CardBasketView";
 import { OrderView } from "./components/Views/OrderView";
+import { ContactsView } from "./components/Views/ContactsView";
 
 import { cloneTemplate, ensureElement } from "./utils/utils";
 
@@ -26,6 +27,7 @@ const headerEll = ensureElement<HTMLElement>(".header");
 const templBasket = ensureElement<HTMLTemplateElement>("#basket");
 const templCardBasket = ensureElement<HTMLTemplateElement>("#card-basket");
 const templOrder = ensureElement<HTMLTemplateElement>("#order");
+const templContacts = ensureElement<HTMLTemplateElement>("#contacts");
 
 const emitter = new EventEmitter();
 const catalog = new Catalog(emitter);
@@ -40,6 +42,10 @@ const basketView = new BasketView(
 );
 const orderView = new OrderView(
   cloneTemplate<HTMLFormElement>(templOrder),
+  emitter,
+);
+const contactsView = new ContactsView(
+  cloneTemplate<HTMLFormElement>(templContacts),
   emitter,
 );
 
@@ -151,24 +157,53 @@ emitter.on("form:address", (address) => {
   buyer.saveBuyer(address);
 });
 
+//открытие окна контактов
+emitter.on("order:submit", () => {
+  modal.open(contactsView.render());
+});
+
+//ввод почты
+emitter.on("form:email", (email) => {
+  buyer.saveBuyer(email);
+});
+
+//ввод номера телефона
+emitter.on("form:phone", (phone) => {
+  buyer.saveBuyer(phone);
+});
+
 //Изменение данных покупателя
 emitter.on("buyer:changed", () => {
   orderView.pay = buyer.getBuyer().payment;
   orderView.address = buyer.getBuyer().address;
 
   const allErrors = buyer.validateBuyer();
-  const errors = Object.fromEntries(
+  const errorsOrder = Object.fromEntries(
     Object.entries({
       payment: allErrors.payment,
       address: allErrors.address,
     }).filter(([, value]) => Boolean(value)),
   ) as Record<string, string>;
 
-  orderView.errors = errors;
+  orderView.errors = errorsOrder;
 
-  orderView.disabled = Object.keys(errors).length > 0;
+  orderView.disabled = Object.keys(errorsOrder).length > 0;
 
   orderView.render();
+
+  contactsView.email = buyer.getBuyer().email;
+  contactsView.phone = buyer.getBuyer().phone;
+
+  const errorsContacts = Object.fromEntries(
+    Object.entries({
+      email: allErrors.email,
+      phone: allErrors.phone,
+    }).filter(([, value]) => Boolean(value)),
+  ) as Record<string, string>;
+
+  contactsView.errors = errorsContacts;
+  contactsView.disabled = Object.keys(errorsContacts).length > 0;
+  contactsView.render();
 });
 
 const api = new Api(API_URL);

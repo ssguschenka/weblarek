@@ -13,7 +13,7 @@ export class FormView<T> extends Component<IForm & T> {
 
   constructor(
     protected container: HTMLElement,
-    protected events: IEvents,
+    protected events: IEvents, private submitEventName: string
   ) {
     super(container);
 
@@ -24,7 +24,7 @@ export class FormView<T> extends Component<IForm & T> {
     this.errorsElement = ensureElement<HTMLElement>(".form__errors", this.container);
 
     this.buttonSubmit.addEventListener('click', () => {
-      this.events.emit("button:clicked", {button: this.buttonSubmit.classList})
+      this.events.emit(this.submitEventName)
     })
   }
 
