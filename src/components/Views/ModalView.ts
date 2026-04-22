@@ -1,25 +1,32 @@
-export class ModalView {
+import { ensureElement } from "../../utils/utils";
+import { Component } from "../base/Component";
+import { IEvents } from "../../types";
+
+interface IModal {
+  container: HTMLElement,
+  content: HTMLElement,
+  button: HTMLButtonElement
+}
+
+export class ModalView extends Component<IModal>{
   private containerElement: HTMLElement;
   private contentElement: HTMLElement;
   private buttonCloseElement: HTMLButtonElement;
 
-  constructor(container: HTMLElement, onClose?: () => void) {
+  constructor(protected container: HTMLElement, protected events: IEvents) {
+    super(container); 
+
     this.containerElement = container;
-    this.contentElement = container.querySelector(".modal__content")!;
-    this.buttonCloseElement = container.querySelector(".modal__close")!;
+    this.contentElement = ensureElement<HTMLElement>(".modal__content", this.container);
+    this.buttonCloseElement = ensureElement<HTMLButtonElement>(".modal__close", this.container);
 
     this.buttonCloseElement.addEventListener("click", () => {
-      this.close();
-
-      if(onClose) {
-        onClose();
-      }
-      
+      this.events.emit("modal:closed", {button: this.buttonCloseElement.classList})
     });
 
     container.addEventListener("click", (e) => {
       if (e.target === container) {
-        this.close();
+       this.events.emit("modal:closed")
       }
     });
   }

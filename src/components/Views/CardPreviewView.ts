@@ -68,9 +68,6 @@ if (actions?.onClick) {
    */
   set button(value: string) {
       this.buttonElement.textContent = value;
-    if(this.price === null) {
-      this.disabled = true;
-    }
   }
 
   /**
