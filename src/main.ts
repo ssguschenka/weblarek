@@ -1,4 +1,5 @@
 import { Catalog } from "./components/Models/Catalog";
+import { Basket } from "./components/Models/Basket";
 import { LarekApi } from "./components/base/LarekApi";
 import "./scss/styles.scss";
 import { Api } from "./components/base/Api";
@@ -9,6 +10,9 @@ import { GalleryView } from "./components/Views/GalleryView";
 import { CardCatalogView } from "./components/Views/CardCatalogView";
 import { ModalView } from "./components/Views/ModalView";
 import { CardPreviewView } from "./components/Views/CardPreviewView";
+import { HeaderView } from "./components/Views/HeaderView";
+import { BasketView } from "./components/Views/BasketView";
+import { CardBasketView } from "./components/Views/CardBasketView";
 
 import { cloneTemplate, ensureElement } from "./utils/utils";
 
@@ -16,10 +20,17 @@ const gallerey = ensureElement<HTMLElement>(".gallery");
 const templCardCatalog = ensureElement<HTMLTemplateElement>("#card-catalog");
 const modalContainer = ensureElement<HTMLElement>(".modal");
 const templCardPreview = ensureElement<HTMLTemplateElement>("#card-preview");
+const headerEll = ensureElement<HTMLElement>(".header");
+const templBasket = ensureElement<HTMLTemplateElement>("#basket");
+const templCardBasket = ensureElement<HTMLTemplateElement>("#card-basket");
 const emitter = new EventEmitter();
 const catalog = new Catalog(emitter);
+const basket = new Basket(emitter);
 const gallereyView = new GalleryView(gallerey);
 const modal = new ModalView(modalContainer, emitter);
+const header = new HeaderView(headerEll, emitter);
+const basketView = new BasketView(cloneTemplate<HTMLElement>(templBasket), emitter);
+
 
 //Изменение каталога
 emitter.on("catalog:changed", () => {
@@ -55,6 +66,26 @@ emitter.on("card:select", (product: IProduct) => {
 //Закрытие модального окна
 emitter.on("modal:closed", () => {
   modal.close();
+});
+
+//Открытие корзины
+emitter.on("basket:open", () => {
+  const products = basket.getProducts().map((product, index) => {
+    const card = new CardBasketView(
+      cloneTemplate<HTMLElement>(templCardBasket),
+      emitter
+    );
+
+    return card.render(product);
+  });
+  if(basket.getCount() === 0) {
+    basketView.submitDisabled = true;
+  }
+  modal.open(
+    basketView.render({
+      list: products
+    })
+  );
 });
 
 const api = new Api(API_URL);

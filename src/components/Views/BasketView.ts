@@ -1,45 +1,43 @@
-export class BasketView {
+import { ensureElement } from "../../utils/utils";
+import { Component } from "../base/Component";
+import { IEvents } from "../../types";
+
+interface IBasket {
+  list: HTMLElement[]
+  // button: HTMLButtonElement,
+  // price: number | null
+}
+
+export class BasketView extends Component<IBasket>{
   private listElement: HTMLElement;
   private buttonElement: HTMLButtonElement;
   private priceElement: HTMLElement;
-  private emptyTextElement: HTMLElement | null = null;
 
-  constructor(
-    private container: HTMLElement,
-    onSubmit: () => void,
-  ) {
-    this.listElement = container.querySelector(".basket__list")!;
-    this.buttonElement = container.querySelector(".basket__button")!;
-    this.priceElement = container.querySelector(".basket__price")!;
+  constructor(container: HTMLElement, protected evenst: IEvents) {
+    super(container);
 
-    this.buttonElement.addEventListener("click", onSubmit);
+    this.listElement = ensureElement<HTMLElement>(".basket__list", this.container);
+    this.buttonElement = ensureElement<HTMLButtonElement>(".basket__button", this.container);
+    this.priceElement = ensureElement<HTMLElement>(".basket__price", this.container);
+
+    this.buttonElement.addEventListener("click", () => {
+      this.evenst.emit("button:clicked", {submit: this.buttonElement.classList})
+    });
   }
 
-  /**
-   *
-   * @param items - карточки товаров
-   * @param value - цена товаров
-   * @returns - разметка корзины
-   */
-  render(items: HTMLElement[], value: number): HTMLElement {
-    if (items.length === 0) {
-      this.listElement.replaceChildren();
-      const empty: HTMLElement = document.createElement("li");
-      empty.textContent = "Корзина пуста";
-      this.emptyTextElement! = empty;
-      this.listElement.append(empty);
-      this.setSubmitDisabled(true);
-    } else {
-      this.listElement.replaceChildren(...items);
-      this.emptyTextElement = null;
-      this.setSubmitDisabled(false);
-    }
+  //Метод установки элементов корзины
+  set items(items: HTMLElement[]) {
+    this.listElement.replaceChildren(...items);
+  }
+
+
+  //Метод установки суммы продуктов в корзине
+  set price(value: number) {
     this.priceElement.textContent = `${value} синапсов`;
-    return this.container;
   }
 
   // Метод для отключения кнопки
-  setSubmitDisabled(value: boolean) {
+  set submitDisabled(value: boolean) {
     this.buttonElement.disabled = value;
   }
 }
