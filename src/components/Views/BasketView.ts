@@ -21,7 +21,7 @@ export class BasketView extends Component<IBasket>{
     this.priceElement = ensureElement<HTMLElement>(".basket__price", this.container);
 
     this.buttonElement.addEventListener("click", () => {
-      this.evenst.emit("button:clicked", {submit: this.buttonElement.classList})
+      this.evenst.emit("products:buy")
     });
   }
 

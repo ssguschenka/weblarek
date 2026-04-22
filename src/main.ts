@@ -1,5 +1,6 @@
 import { Catalog } from "./components/Models/Catalog";
 import { Basket } from "./components/Models/Basket";
+import { Buyer } from "./components/Models/Buyer";
 import { LarekApi } from "./components/base/LarekApi";
 import "./scss/styles.scss";
 import { Api } from "./components/base/Api";
@@ -13,6 +14,7 @@ import { CardPreviewView } from "./components/Views/CardPreviewView";
 import { HeaderView } from "./components/Views/HeaderView";
 import { BasketView } from "./components/Views/BasketView";
 import { CardBasketView } from "./components/Views/CardBasketView";
+import { OrderView } from "./components/Views/OrderView";
 
 import { cloneTemplate, ensureElement } from "./utils/utils";
 
@@ -23,15 +25,22 @@ const templCardPreview = ensureElement<HTMLTemplateElement>("#card-preview");
 const headerEll = ensureElement<HTMLElement>(".header");
 const templBasket = ensureElement<HTMLTemplateElement>("#basket");
 const templCardBasket = ensureElement<HTMLTemplateElement>("#card-basket");
+const templOrder = ensureElement<HTMLTemplateElement>("#order");
+
 const emitter = new EventEmitter();
 const catalog = new Catalog(emitter);
 const basket = new Basket(emitter);
+const buyer = new Buyer(emitter);
 const gallereyView = new GalleryView(gallerey);
 const modal = new ModalView(modalContainer, emitter);
 const header = new HeaderView(headerEll, emitter);
 const basketView = new BasketView(
   cloneTemplate<HTMLElement>(templBasket),
-  emitter
+  emitter,
+);
+const orderView = new OrderView(
+  cloneTemplate<HTMLFormElement>(templOrder),
+  emitter,
 );
 
 //Изменение каталога
@@ -49,6 +58,11 @@ emitter.on("catalog:changed", () => {
 
 //Клик по карточке товара
 emitter.on("card:select", (product: IProduct) => {
+  catalog.saveItem(product);
+});
+
+//изменение выбранного для просмотра товара
+emitter.on("product:changed", (product: IProduct) => {
   const cardPrev = new CardPreviewView(
     cloneTemplate<HTMLElement>(templCardPreview),
     {
@@ -61,6 +75,8 @@ emitter.on("card:select", (product: IProduct) => {
   if (product.price === null) {
     cardPrev.disabled = true;
     cardPrev.button = "Недоступно";
+  } else {
+    cardPrev.button = "Купить";
   }
 
   if (basket.hasItem(product.id)) {
@@ -98,10 +114,10 @@ emitter.on("basket:changed", () => {
     const card = new CardBasketView(
       cloneTemplate<HTMLElement>(templCardBasket),
       {
-      onClick: () => {
-        emitter.emit("product:delete", product);
+        onClick: () => {
+          emitter.emit("product:delete", product);
+        },
       },
-    }
     );
 
     card.index = index + 1;
@@ -115,10 +131,45 @@ emitter.on("basket:changed", () => {
   basketView.render();
 });
 
-//Удалить товар из корзины 
+//Удалить товар из корзины
 emitter.on("product:delete", (product: IProduct) => {
-basket.deleteItem(product);
-})
+  basket.deleteItem(product);
+});
+
+//Оформить покупку
+emitter.on("products:buy", () => {
+  modal.open(orderView.render());
+});
+
+//Выбор оплаты
+emitter.on("button:payment", (payment) => {
+  buyer.saveBuyer(payment);
+});
+
+//Ввод адреса
+emitter.on("form:address", (address) => {
+  buyer.saveBuyer(address);
+});
+
+//Изменение данных покупателя
+emitter.on("buyer:changed", () => {
+  orderView.pay = buyer.getBuyer().payment;
+  orderView.address = buyer.getBuyer().address;
+
+  const allErrors = buyer.validateBuyer();
+  const errors = Object.fromEntries(
+    Object.entries({
+      payment: allErrors.payment,
+      address: allErrors.address,
+    }).filter(([, value]) => Boolean(value)),
+  ) as Record<string, string>;
+
+  orderView.errors = errors;
+
+  orderView.disabled = Object.keys(errors).length > 0;
+
+  orderView.render();
+});
 
 const api = new Api(API_URL);
 const larekApi = new LarekApi(api);

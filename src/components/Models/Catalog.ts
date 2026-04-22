@@ -38,7 +38,7 @@ export class Catalog {
    */
   saveItem(item: IProduct): void {
     this.item = item;
-    this.events.emit('catalog:changed');
+    this.events.emit("product:changed", item);
   }
 
   //получение товара для подробного отображения

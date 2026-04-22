@@ -1,40 +1,46 @@
 import { FormView } from "./FormView";
+import { ensureAllElements, ensureElement } from "../../utils/utils";
+import { IEvents } from "../../types";
+import { IBuyer } from "../../types";
 
-export class OrderView extends FormView {
-  private buttonsPayElement: NodeListOf<HTMLButtonElement>;
+export type TOrder = Pick<IBuyer, "payment" | "address" >;
+
+export class OrderView extends FormView<TOrder> {
+  private buttonsPayElement: HTMLButtonElement[];
   private inputAddress: HTMLInputElement;
 
   constructor(
-    form: HTMLFormElement,
-    onChange: (data: { payment?: string; address?: string }) => void,
-    onSubmit: () => void,
+    protected form: HTMLFormElement,
+    // onChange: (data: { payment?: string; address?: string }) => void,
+    protected events: IEvents
   ) {
-    super(form);
+    super(form, events);
 
-    this.inputAddress = form.elements.namedItem("address") as HTMLInputElement;
-    this.buttonsPayElement = form.querySelectorAll(".button_alt")!;
-
+    this.inputAddress = ensureElement<HTMLInputElement>('[name="address"]', this.form);
+    this.buttonsPayElement = ensureAllElements<HTMLButtonElement>(".button_alt", this.form) as  HTMLButtonElement[];
+ 
     // выбор оплаты
     this.buttonsPayElement.forEach((button) =>
       button.addEventListener("click", () => {
-        this.buttonsPayElement.forEach((btn) =>
-          btn.classList.remove("button_alt-active"),
-        );
-        button.classList.add("button_alt-active");
-
-        onChange({ payment: button.name });
+        this.events.emit("button:payment", { payment: button.name });
+        
       }),
     );
 
     // ввод адреса
-    this.inputAddress.addEventListener("input", () =>
-      onChange({ address: this.inputAddress.value }),
+    this.inputAddress.addEventListener("input", () => {
+      this.events.emit("form:address", { address: this.inputAddress.value });
+    }
     );
+  }
 
-    // submit
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      onSubmit();
-    });
+  set pay(value: string) {
+    this.buttonsPayElement.forEach((button) => {
+      button.classList.toggle('button_alt-active', button.name === value);
+    })
+  }
+
+  set address(value: string) {
+    this.inputAddress.value = value;
   }
 }
