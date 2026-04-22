@@ -76,9 +76,7 @@ emitter.on("modal:closed", () => {
 
 //Открытие корзины
 emitter.on("basket:open", () => {
-  if (basket.getCount() === 0) {
-    basketView.submitDisabled = true;
-  }
+  basketView.submitDisabled = basket.getCount() === 0;
   modal.open(basketView.render());
 });
 
@@ -103,7 +101,7 @@ emitter.on("basket:changed", () => {
       onClick: () => {
         emitter.emit("product:delete", product);
       },
-    },
+    }
     );
 
     card.index = index + 1;
@@ -112,8 +110,15 @@ emitter.on("basket:changed", () => {
 
   basketView.items = products;
   basketView.price = basket.getPriceProducts();
+  basketView.submitDisabled = basket.getCount() === 0;
+
   basketView.render();
 });
+
+//Удалить товар из корзины 
+emitter.on("product:delete", (product: IProduct) => {
+basket.deleteItem(product);
+})
 
 const api = new Api(API_URL);
 const larekApi = new LarekApi(api);
