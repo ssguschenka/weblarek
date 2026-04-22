@@ -53,3 +53,8 @@ export interface IOrderProducts {
   items: [];
   total: number;
 }
+
+
+export interface IEvents {
+  emit<T extends object>(eventName: string, data?: T): void;
+}

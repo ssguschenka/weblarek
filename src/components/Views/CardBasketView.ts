@@ -1,16 +1,22 @@
 import { CardView } from "./CardView";
+import { ensureElement } from "../../utils/utils";
+import { IEvents } from "../../types";
+import { IProduct } from "../../types";
 
-export class CardBasketView extends CardView {
+export type ICardBasket = Pick<IProduct, "id">;
+
+export class CardBasketView extends CardView<ICardBasket> {
   private indexElement: HTMLElement;
   private buttonRemoveElement: HTMLButtonElement;
 
-  constructor(container: HTMLElement, onDelite: () => void) {
+  constructor(container: HTMLElement, protected events: IEvents) {
     super(container);
-    this.indexElement = container.querySelector(".basket__item-index")!;
-    this.buttonRemoveElement = container.querySelector(".basket__item-delete")!;
+    this.indexElement = ensureElement<HTMLElement>(".basket__item-index", this.container);
+    this.buttonRemoveElement = ensureElement<HTMLButtonElement>(".basket__item-delete", this.container);
+
     this.buttonRemoveElement.addEventListener("click", (e) => {
       e.preventDefault();
-      onDelite();
+      this.events.emit("products:design", {button: this.buttonRemoveElement.classList})
     });
   }
 
@@ -18,7 +24,7 @@ export class CardBasketView extends CardView {
    * Метод установки порядкового номера товара в корзине
    * @param value - порядковый номер
    */
-  setIndex(value: number) {
+  set index(value: number) {
     this.indexElement.textContent = String(value);
   }
 }

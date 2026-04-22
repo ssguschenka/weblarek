@@ -1,11 +1,11 @@
 import { IProduct } from "../../types";
-import { EventEmitter } from "../base/Events";
+import { IEvents } from "../../types";
 
 export class Basket {
   private products: IProduct[] = [];
-  private events: EventEmitter;
+  private events: IEvents;
 
-  constructor(events: EventEmitter) {
+  constructor(events: IEvents) {
     this.events = events;
   }
 
@@ -20,7 +20,7 @@ export class Basket {
    */
   addItem(item: IProduct): void {
     this.products.push(item);
-    this.events.emit('basket:changed', { items: this.getProducts(), price: this.getPriceProducts(), count: this.getCount() });
+    this.events.emit('basket:changed');
   }
 
   /**
@@ -32,13 +32,13 @@ export class Basket {
     if (index > -1) {
       this.products.splice(index, 1);
     }
-    this.events.emit('basket:changed', { items: this.getProducts(), price: this.getPriceProducts(), count: this.getCount() });
+    this.events.emit('basket:changed');
   }
 
   //очистка корзины
   clearBasket(): void {
     this.products = [];
-    this.events.emit('basket:changed', { items: this.getProducts(), price: 0, count: 0 });
+    this.events.emit('basket:changed');
   }
 
   //получениe стоимости всех товаров в корзине
@@ -59,3 +59,4 @@ export class Basket {
     return this.products.some((item) => item.id === id);
   }
 }
+

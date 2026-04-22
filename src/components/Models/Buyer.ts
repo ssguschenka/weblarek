@@ -1,6 +1,6 @@
 import { IBuyer } from "../../types";
-import { EventEmitter } from "../base/Events";
-import { TPayment } from "../../types";
+import { IEvents } from "../../types";
+
 
 export class Buyer {
   private payment: IBuyer["payment"] = "";
@@ -8,9 +8,9 @@ export class Buyer {
   private phone: string = "";
   private email: string = "";
 
-  private events: EventEmitter;
+  private events: IEvents;
 
-  constructor(events: EventEmitter) {
+  constructor(events: IEvents) {
     this.events = events;
   }
 
@@ -32,7 +32,7 @@ export class Buyer {
       this.email = data.email;
     }
 
-    this.events.emit('buyer:changed', this.getBuyer())
+    this.events.emit('buyer:changed')
   }
 
   //получениe всех данных покупателя
@@ -51,7 +51,7 @@ export class Buyer {
     this.address = "";
     this.phone = "";
     this.email = "";
-    this.events.emit('buyer:changed', this.getBuyer())
+    this.events.emit('buyer:changed')
   }
 
   //проверкa валидности данных
@@ -76,25 +76,4 @@ export class Buyer {
 
     return errors;
   }
-
-
-  public setPayment(payment: TPayment): void {
-        this.payment = payment;
-        this.events?.emit('buyer:changed', this.getBuyer());
-    }
-
-    public setAddress(address: string): void {
-        this.address = address;
-        this.events?.emit('buyer:changed', this.getBuyer());
-    }
-
-    public setPhone(phone: string): void {
-        this.phone = phone;
-        this.events?.emit('buyer:changed', this.getBuyer());
-    }
-
-    public setEmail(email: string): void {
-        this.email = email;
-        this.events?.emit('buyer:changed', this.getBuyer());
-    }
 }
