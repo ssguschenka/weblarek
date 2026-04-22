@@ -29,8 +29,10 @@ const basket = new Basket(emitter);
 const gallereyView = new GalleryView(gallerey);
 const modal = new ModalView(modalContainer, emitter);
 const header = new HeaderView(headerEll, emitter);
-const basketView = new BasketView(cloneTemplate<HTMLElement>(templBasket), emitter);
-
+const basketView = new BasketView(
+  cloneTemplate<HTMLElement>(templBasket),
+  emitter
+);
 
 //Изменение каталога
 emitter.on("catalog:changed", () => {
@@ -60,6 +62,10 @@ emitter.on("card:select", (product: IProduct) => {
     cardPrev.disabled = true;
     cardPrev.button = "Недоступно";
   }
+
+  if (basket.hasItem(product.id)) {
+    cardPrev.button = "Удалить из корзины";
+  }
   modal.open(cardPrev.render(product));
 });
 
@@ -70,22 +76,43 @@ emitter.on("modal:closed", () => {
 
 //Открытие корзины
 emitter.on("basket:open", () => {
+  if (basket.getCount() === 0) {
+    basketView.submitDisabled = true;
+  }
+  modal.open(basketView.render());
+});
+
+//Добавить товар в корзину или удалить
+emitter.on("product:basket", (product: IProduct) => {
+  if (basket.hasItem(product.id)) {
+    basket.deleteItem(product);
+  } else {
+    basket.addItem(product);
+  }
+});
+
+//Изменнение корзины
+emitter.on("basket:changed", () => {
+  header.counter = basket.getCount();
+  header.render();
+
   const products = basket.getProducts().map((product, index) => {
     const card = new CardBasketView(
       cloneTemplate<HTMLElement>(templCardBasket),
-      emitter
+      {
+      onClick: () => {
+        emitter.emit("product:delete", product);
+      },
+    },
     );
 
+    card.index = index + 1;
     return card.render(product);
   });
-  if(basket.getCount() === 0) {
-    basketView.submitDisabled = true;
-  }
-  modal.open(
-    basketView.render({
-      list: products
-    })
-  );
+
+  basketView.items = products;
+  basketView.price = basket.getPriceProducts();
+  basketView.render();
 });
 
 const api = new Api(API_URL);

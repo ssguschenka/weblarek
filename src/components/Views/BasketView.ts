@@ -4,8 +4,8 @@ import { IEvents } from "../../types";
 
 interface IBasket {
   list: HTMLElement[]
-  // button: HTMLButtonElement,
-  // price: number | null
+  button: HTMLButtonElement,
+  price: number | null
 }
 
 export class BasketView extends Component<IBasket>{
