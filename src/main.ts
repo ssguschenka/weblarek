@@ -115,6 +115,7 @@ emitter.on("product:basket", (product: IProduct) => {
   } else {
     basketModel.addItem(product);
   }
+  modal.close()
 });
 
 //Изменнение корзины
@@ -141,7 +142,6 @@ emitter.on("basket:changed", () => {
   basketView.submitDisabled = basketModel.getCount() === 0;
 
   basketView.render();
-  
 });
 
 //Удалить товар из корзины
@@ -232,14 +232,13 @@ emitter.on("contacts:submit", async() => {
     
     const res = await larekApi.postOrder(order);
     successView.text = `Списано ${res.total} синапсов`;
-    modal.open(successView.render())
+    modal.open(successView.render());
     basketModel.clearBasket();
     buyerModel.clearBuyer();
     
   } catch (error) {
     console.error(error);
   }
-  
 })
 
 
@@ -251,6 +250,5 @@ larekApi
   .getProductList()
   .then((items) => {
     catalogModel.saveProducts(items);
-    console.log(items);
   })
   .catch((error) => console.error(error));
