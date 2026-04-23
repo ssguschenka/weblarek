@@ -3,7 +3,7 @@ import { ensureElement } from "../../utils/utils";
 import { IEvents } from "../../types";
 import { IBuyer } from "../../types";
 
-export type TContacts = Pick<IBuyer, "phone" | "email" >;
+export type TContacts = Pick<IBuyer, "phone" | "email">;
 
 export class ContactsView extends FormView<TContacts> {
   private inputРhone: HTMLInputElement;
@@ -11,12 +11,18 @@ export class ContactsView extends FormView<TContacts> {
 
   constructor(
     form: HTMLFormElement,
-    protected events: IEvents
+    protected events: IEvents,
   ) {
     super(form, events, "contacts:submit");
 
-    this.inputЕmail = ensureElement<HTMLInputElement>('[name="email"]', this.container);
-    this.inputРhone = ensureElement<HTMLInputElement>('[name="phone"]', this.container);
+    this.inputЕmail = ensureElement<HTMLInputElement>(
+      '[name="email"]',
+      this.container,
+    );
+    this.inputРhone = ensureElement<HTMLInputElement>(
+      '[name="phone"]',
+      this.container,
+    );
 
     this.inputЕmail.addEventListener("input", () => {
       this.events.emit("form:email", { email: this.inputЕmail.value });
@@ -27,11 +33,13 @@ export class ContactsView extends FormView<TContacts> {
     });
   }
 
+  // Метод установки телефона покупателя
   set phone(value: string) {
     this.inputРhone.value = value;
   }
 
-  set email(value:string) {
+  // Метод установки почты покупателя
+  set email(value: string) {
     this.inputЕmail.value = value;
   }
 }

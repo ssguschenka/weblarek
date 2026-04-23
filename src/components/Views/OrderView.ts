@@ -17,11 +17,11 @@ export class OrderView extends FormView<TOrder> {
 
     this.inputAddress = ensureElement<HTMLInputElement>(
       '[name="address"]',
-      this.form
+      this.form,
     );
     this.buttonsPayElement = ensureAllElements<HTMLButtonElement>(
       ".button_alt",
-      this.form
+      this.form,
     ) as HTMLButtonElement[];
 
     // выбор оплаты
@@ -37,12 +37,14 @@ export class OrderView extends FormView<TOrder> {
     });
   }
 
+  // метод установки активной кнопки
   set pay(value: string) {
     this.buttonsPayElement.forEach((button) => {
       button.classList.toggle("button_alt-active", button.name === value);
     });
   }
 
+  // метод установки адреса покупателя
   set address(value: string) {
     this.inputAddress.value = value;
   }

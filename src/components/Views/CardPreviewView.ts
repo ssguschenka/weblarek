@@ -4,7 +4,9 @@ import { ensureElement } from "../../utils/utils";
 import { IProduct } from "../../types";
 
 type CategoryKey = keyof typeof categoryMap;
-export type TCardCatalog = Pick<IProduct, "image" | "category" | "description">;
+
+export type TCardCatalog = Pick<IProduct, "description" | "image" | "category">;
+
 interface ICardActions {
   onClick: (event: MouseEvent) => void;
 }
@@ -17,12 +19,24 @@ export class CardPreviewView extends CardView<TCardCatalog> {
 
   constructor(container: HTMLElement, actions?: ICardActions) {
     super(container);
-    this.textElement = ensureElement<HTMLElement>(".card__text", this.container);
-    this.categoryElement = ensureElement<HTMLElement>(".card__category", this.container);
-    this.imageElement = ensureElement<HTMLImageElement>(".card__image", this.container);
-    this.buttonElement = ensureElement<HTMLButtonElement>(".card__button", this.container);
+    this.textElement = ensureElement<HTMLElement>(
+      ".card__text",
+      this.container,
+    );
+    this.categoryElement = ensureElement<HTMLElement>(
+      ".card__category",
+      this.container,
+    );
+    this.imageElement = ensureElement<HTMLImageElement>(
+      ".card__image",
+      this.container,
+    );
+    this.buttonElement = ensureElement<HTMLButtonElement>(
+      ".card__button",
+      this.container,
+    );
 
-if (actions?.onClick) {
+    if (actions?.onClick) {
       this.buttonElement.addEventListener("click", actions.onClick);
     }
   }
@@ -35,21 +49,21 @@ if (actions?.onClick) {
     this.textElement.textContent = value;
   }
 
- /**
-    * Метод установки категории товара в карточке
-    * присваиваем элементу каточки класс из categoryMap, соответствующий категории товара
-    * @param value - категория товара
-    */
-   set category(value: CategoryKey) {
-       this.categoryElement.textContent = value;
- 
-       for (const key in categoryMap) {
-         this.categoryElement.classList.toggle(
-           categoryMap[key as CategoryKey],
-           key === value,
-         );
-       }
-   }
+  /**
+   * Метод установки категории товара в карточке
+   * присваиваем элементу каточки класс из categoryMap, соответствующий категории товара
+   * @param value - категория товара
+   */
+  set category(value: CategoryKey) {
+    this.categoryElement.textContent = value;
+
+    for (const key in categoryMap) {
+      this.categoryElement.classList.toggle(
+        categoryMap[key as CategoryKey],
+        key === value,
+      );
+    }
+  }
 
   /**
    * Метод установки картинки товара в карточке.
@@ -67,7 +81,7 @@ if (actions?.onClick) {
    * @param value - текст на кнопке
    */
   set button(value: string) {
-      this.buttonElement.textContent = value;
+    this.buttonElement.textContent = value;
   }
 
   /**
@@ -75,6 +89,6 @@ if (actions?.onClick) {
    * @param value - булевое значение
    */
   set disabled(value: boolean) {
-      this.buttonElement.disabled = value;
+    this.buttonElement.disabled = value;
   }
 }

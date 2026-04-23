@@ -92,6 +92,8 @@ emitter.on("product:changed", (product: IProduct) => {
   if (basketModel.hasItem(product.id)) {
     cardPrev.button = "Удалить из корзины";
   }
+
+  cardPrev.text = product.description;
   modal.open(cardPrev.render(product));
 });
 
@@ -139,6 +141,7 @@ emitter.on("basket:changed", () => {
   basketView.submitDisabled = basketModel.getCount() === 0;
 
   basketView.render();
+  
 });
 
 //Удалить товар из корзины
@@ -239,10 +242,7 @@ emitter.on("contacts:submit", async() => {
   
 })
 
-//Выход из окна оформленного заказа
-emitter.on("order:accepted", () => {
-  modal.close()
-})
+
 
 const api = new Api(API_URL);
 const larekApi = new LarekApi(api);

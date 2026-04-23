@@ -1,24 +1,28 @@
 import { CardView } from "./CardView";
 import { ensureElement } from "../../utils/utils";
 
-import { IProduct } from "../../types";
-
 export interface ICardBasket {
-  index: number
+  index: number;
 }
 
 interface ICardActions {
   onClick: (event: MouseEvent) => void;
 }
 
-export class CardBasketView extends CardView<IProduct> {
+export class CardBasketView extends CardView<ICardBasket> {
   private indexElement: HTMLElement;
   private buttonRemoveElement: HTMLButtonElement;
 
   constructor(container: HTMLElement, actions?: ICardActions) {
     super(container);
-    this.indexElement = ensureElement<HTMLElement>(".basket__item-index", this.container);
-    this.buttonRemoveElement = ensureElement<HTMLButtonElement>(".basket__item-delete", this.container);
+    this.indexElement = ensureElement<HTMLElement>(
+      ".basket__item-index",
+      this.container,
+    );
+    this.buttonRemoveElement = ensureElement<HTMLButtonElement>(
+      ".basket__item-delete",
+      this.container,
+    );
 
     if (actions?.onClick) {
       this.buttonRemoveElement.addEventListener("click", actions.onClick);
