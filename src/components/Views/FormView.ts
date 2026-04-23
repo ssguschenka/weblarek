@@ -23,7 +23,8 @@ export class FormView<T> extends Component<IForm & T> {
     );
     this.errorsElement = ensureElement<HTMLElement>(".form__errors", this.container);
 
-    this.buttonSubmit.addEventListener('click', () => {
+    this.buttonSubmit.addEventListener('click', (e) => {
+      e.preventDefault();
       this.events.emit(this.submitEventName)
     })
   }
